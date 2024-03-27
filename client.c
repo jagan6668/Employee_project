@@ -40,19 +40,19 @@ void employee_thread();
 void search_thread();
 void records_with_skills();
 void records_with_experience();
-//void sorting_with_emp_id();
-
+void sorting_with_emp_id();
+void sorting_with_first_name();
 int main() {
    
     int key = 9706;
     msgid = msgget(key, 0666|IPC_CREAT);
-    if (msgid == -1) {
-        perror("msgget");
-        exit(EXIT_FAILURE);
+     if (msgid == -1) {      
+      perror("msgget");
+         exit(EXIT_FAILURE);
     }
 msg_buffer.type = getpid();
 printf("Client Id - %d\n",getpid());    
-pthread_t tid; // Thread ID for each client
+pthread_t tid;
 
     int client_id =1;
     msgid2=msgget(CLIENT_MSG_KEY,IPC_CREAT|0666);     
@@ -62,7 +62,7 @@ pthread_t tid; // Thread ID for each client
             perror("error in pthread_create");
             
         }
-        printf("Client %d started.\n", client_id);
+        printf("Client's  %d  operation started.\n", client_id);
         pthread_join(tid,NULL);
        
         client_id++;
@@ -81,6 +81,8 @@ void *client_thread(void *arg) {
     printf("2. Search\n");
     printf("3. Records with Skills\n");
     printf("4. Records with Experience\n");
+    printf("5. Sort with emp_id \n");
+    printf("6. Sort with first_name \n ");
     scanf("%d", &choice);
 
     switch (choice) {
@@ -88,32 +90,35 @@ void *client_thread(void *arg) {
 	   
             msg_buffer.pac.d = 1; // Add Employee
             employee_thread();
- 	   
+ 	    
             break;
         case 2:
-	   
-            //msg_buffer.pac.d = 2; // Search
+	    
+            // Search
             search_thread();
-                 
-            break;
+            
+          break;
        case 3:
-           
             msg_buffer.pac.d = 3; // Records with Skills
             records_with_skills();
-	   
-            break;
+	     break;
             
         case 4:
 	   
             msg_buffer.pac.d = 4; // Records with Experience
             records_with_experience();
             break;
-       /*case 5:
-
-           msg_buffer.pac.d=5;
+       case 5:
+            msg_buffer.pac.d=5;
            sorting_with_emp_id();
-           break;*/
-
+        
+           break;
+        
+       case 6:
+            
+            msg_buffer.pac.d=6;
+            sorting_with_first_name();
+            break;
         default:
             printf("Client %d: Invalid choice\n", client_id);
             pthread_exit(NULL);
@@ -270,4 +275,43 @@ else
 }
 }
 
-
+void sorting_with_emp_id()
+{
+ msg_buffer.pac.c='\0';
+if (msgsnd(msgid,&msg_buffer,sizeof(Packet),0)==-1)
+   perror("error in receiving \n ");
+else
+   printf("sent correctly \n ");
+while(1)
+{
+if (msgrcv(msgid2,&response,sizeof(Packet),getpid(),0)!=-1)
+{
+ if(strcmp(response.pac.data.last_name,"exit")==0)
+    break;
+ else
+ { 
+  printf(" *************** \n First name : %s \n Last name : %s \n Skills : %s \n Project : %s \n Emp_id : %d \n ************* \n  ",response.pac.data.first_name,response.pac.data.last_name,response.pac.data.skills,response.pac.data.project,response.pac.data.emp_id);
+ }
+}
+}
+}
+void sorting_with_first_name()
+{
+ msg_buffer.pac.c='\0';
+if (msgsnd(msgid,&msg_buffer,sizeof(Packet),0)==-1)
+   perror("error in receiving \n ");
+else
+   printf("sent correctly \n ");
+while(1)
+{
+if (msgrcv(msgid2,&response,sizeof(Packet),getpid(),0)!=-1)
+{
+ if(strcmp(response.pac.data.last_name,"exit")==0)
+    break;
+ else
+ { 
+  printf(" *************** \n First name : %s \n Last name : %s \n Skills : %s \n Project : %s \n Emp_id : %d \n ************* \n  ",response.pac.data.first_name,response.pac.data.last_name,response.pac.data.skills,response.pac.data.project,response.pac.data.emp_id);
+ }
+}
+}
+}

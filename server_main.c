@@ -38,10 +38,11 @@ msg_buffer.pac.d=0;
     }
      printf(" msgid - %d , msgid2 - %d  \n :",msgid,msgid2);
     printf("Server started.\n");
-
+   
     while (1) {
+        //printf("mohan \n ");
         pthread_create(&tid, NULL, serve_client, NULL);
-        pthread_join(tid, NULL);
+        //pthread_join(tid, NULL);
     }
 
     return 0;
@@ -58,7 +59,7 @@ puts(msg_buffer.pac.data.first_name);
 printf( "  CHECK msg_buffer.pac.data.frst_name :  %s\n ",msg_buffer.pac.data.first_name);  
   switch (msg_buffer.pac.d) {
         case 1:
-	    pthread_mutex_lock(&mutex);
+	   pthread_mutex_lock(&mutex);
             add_employee(&msg_buffer.pac.data);
 	    pthread_mutex_unlock(&mutex);
 
@@ -81,13 +82,19 @@ printf( "  CHECK msg_buffer.pac.data.frst_name :  %s\n ",msg_buffer.pac.data.fir
 	    printf("Records With Experience \n ");
 	    pthread_mutex_unlock(&mutex);
             break;
-       /*case 5:
+       case 5:
             pthread_mutex_lock(&mutex);
             sorting_with_emp_id();
             pthread_mutex_unlock(&mutex);
-            break;*/
+            break;  
+      case 6:
+           pthread_mutex_lock(&mutex);
+            sorting_with_first_name();
+           pthread_mutex_unlock(&mutex);
+            break;
+ 
         default:
             printf(" Invalid command \n ");
     }
-//     pthread_exit(NULL);
+//  pthread_exit(NULL);
 }
